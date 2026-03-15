@@ -1,0 +1,23 @@
+name: auto blog
+
+on:
+  schedule:
+    - cron: "30 13 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: run script
+        run: python generate_blog.py
+
+      - name: commit
+        run: |
+          git config --global user.name "bot"
+          git config --global user.email "bot@example.com"
+          git add .
+          git commit -m "auto blog update"
+          git push
