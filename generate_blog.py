@@ -1,39 +1,47 @@
+from openai import OpenAI
 import datetime
 import random
 
+client = OpenAI()
+
+date = datetime.date.today()
+
 topics = [
-"最近のネット文化について",
-"SNSで起こる炎上の理由",
-"アニメの評価が分かれる理由",
-"逆張り意見が生まれる心理",
-"ネットミームが広がる仕組み",
-"ゲームコミュニティの文化",
-"オタク文化の変化",
-"ネット議論が荒れやすい理由",
-"流行が急に終わる理由",
-"ネットでバズるコンテンツの特徴"
+"ネット文化",
+"SNSの心理",
+"アニメ文化",
+"ネットミーム",
+"炎上の仕組み",
+"ゲーム文化",
+"オタク文化",
+"ネット議論"
 ]
 
 topic = random.choice(topics)
 
+response = client.responses.create(
+    model="gpt-5",
+    input=f"{topic}について800文字くらいのブログ記事を書いて"
+)
+
+article = response.output_text
+
+image = f"https://picsum.photos/800/400?random={date}"
+
+filename = f"post-{date}.md"
+
 content = f"""
-# 今日の研究テーマ
+# {topic}
 
-投稿日: {datetime.date.today()}
+投稿日: {date}
 
-テーマ：{topic}
+![image]({image})
 
-今日はこのテーマについてゆるく考察してみる。
-
-インターネットでは様々な文化や現象が生まれている。
-なぜそのような現象が起きるのか、
-背景や理由を自分なりに考えてまとめていく。
-
-このブログでは、主が気になったことを
-自由に研究していく。
+{article}
 """
-
-filename = f"post-{datetime.date.today()}.md"
 
 with open(filename,"w") as f:
     f.write(content)
+
+with open("index.md","a") as f:
+    f.write(f"\n- [{topic}]({filename})")
