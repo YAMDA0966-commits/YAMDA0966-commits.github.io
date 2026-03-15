@@ -1,6 +1,7 @@
 name: auto blog
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "30 13 * * *"
 
@@ -11,7 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: run script
+      - name: install python
+        run: pip install openai requests
+
+      - name: generate article
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: python generate_blog.py
 
       - name: commit
@@ -19,5 +25,5 @@ jobs:
           git config --global user.name "bot"
           git config --global user.email "bot@example.com"
           git add .
-          git commit -m "auto blog update"
+          git commit -m "auto blog"
           git push
